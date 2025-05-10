@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse, Response
+from fastapi.staticfiles import StaticFiles
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -24,9 +25,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Price Comparison API",
-             description="API for comparing prices across Amazon, Flipkart, and Meesho",
-             version="1.0.0")
+app = FastAPI()
 
 # Add CORS middleware
 app.add_middleware(
@@ -51,9 +50,9 @@ async def log_requests(request: Request, call_next):
             content={"detail": f"Internal server error: {str(e)}"}
         )
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 async def root():
-    html_content = """
+    return HTMLResponse("""
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -143,8 +142,7 @@ async def root():
         </script>
     </body>
     </html>
-    """
-    return HTMLResponse(content=html_content, status_code=200)
+    """)
 
 def clean_price(price_str: str) -> float:
     try:
