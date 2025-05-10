@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, Response
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -53,7 +53,7 @@ async def log_requests(request: Request, call_next):
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    return """
+    html_content = """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -144,6 +144,7 @@ async def root():
     </body>
     </html>
     """
+    return HTMLResponse(content=html_content, status_code=200)
 
 def clean_price(price_str: str) -> float:
     try:
